@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/templates/header.css" />
+    <script src="https://kit.fontawesome.com/0aef5c9550.js" crossorigin="anonymous"></script>
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div class="topnav">
+        <a class="active" href="/home">Home</a>
+        <div class="login-container">
+            {{if and .LoggedIn .Nbool }}
+
+            <a  class="notification" href="/activitypage?userid={{.UserID}}">
+                <span> {{ .Username }} </span>
+                <span class="badge">{{ .Notification}}</span>
+            </a>
+            <a class="active" href="/logout">Logout</a>
+
+
+            {{else if .LoggedIn}}
+            <a href="/activitypage?userid={{.UserID}}">
+                {{ .Username }}
+            </a>
+            <a class="active" href="/logout">Logout</a>
+            {{else}}
+            <form action="/loginauth" method="POST">
+                <input type="text" placeholder="Username" name="username" required>
+                <input type="password" placeholder="Password" name="password" required>
+                <button type="submit">Login</button>
+            </form>
+            <a class="register btn-link" href="/register">Register</a>
+            <form action="/googlelogin" method="post">
+                <button class="fa-brands fa-google" type="submit"></button>
+            </form>
+            <form action="/githublogin" method="post">
+                <button  class="fa-brands fa-github"
+
+                    type="submit"></button>
+            </form>
+            {{end}}
+        </div>
+    </div>
+</body>
+
+</html>

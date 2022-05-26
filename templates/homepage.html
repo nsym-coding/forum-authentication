@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="/templates/homepage.css" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  {{ template "header.html" . }}
+  <div id="maincontent">
+    <h2>Posts</h2>
+    {{if .LoggedIn}}
+    <div class="userbuttons">
+      <a class="post btn-link" href="/createpost?userid={{.UserID}}">
+        New Post
+      </a>
+      {{ if eq .UserType "user" }}
+      <form action="/becomeamod" method="post" style="all: inherit;">
+        <a class="post btn-link" href="/becomeamod">Become a Mod</a>
+      </form>
+      {{ end }}
+    </div>
+    <p style="text-align: right;">
+        <form id="homepagefilter" action="/home" method="POST">
+      <label for="userfilter">Sort by:</label>
+      <select name="userfilter" id="userfilter">
+        <option value="Created Post">My Posts</option>
+        <option value="Liked Posts">Liked Posts</option>
+      </select>
+      <input type="submit" value="Submit">
+    </form>
+    {{end}}
+    <p style="text-align: right;">
+    <form id="categoryfilter" action="/home" method="POST">
+      <label for="categoryfilter">Filter by Category:</label>
+      <select name="category" id="categoryfilter">
+        {{ range .Categories }}
+        <option value="{{ . }}">{{ . }}</option>
+        
+        {{ end }}
+      </select>
+      <input type="submit" value="Submit">
+    </form>
+    </p>
+    {{ range .AllPosts }}
+    <div class="post-row">
+      <div>
+        <div class="post-title"><a href="/showpost?postid={{.PostID}}">{{ .PostTitle }}</a></div>
+        <div class="post-extra-info">
+          <p>Posted by {{ .PostUsername }} {{ .CreationDate }}</p>
+        </div>
+      </div>
+      <div class="post-stats">
+        <p>&#128077;&nbsp;{{.NetLikes}}&nbsp;&#128172;&nbsp;{{.CommentNum}}</p>
+      </div>
+    </div>
+    {{ end }}
+  </div>
+</body>
+
+</html>

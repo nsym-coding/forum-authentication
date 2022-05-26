@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://kit.fontawesome.com/0aef5c9550.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="/templates/showpost.css" />
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Show post</title>
+</head>
+
+<body>
+    {{ template "header.html" . }}
+    <div id="maincontent">
+        {{ range .Posts }}
+        <div class="post-content">
+            <div class="post-title">
+                <p>{{ .PostTitle }}</p>
+            </div>
+            {{ if not .PostContent }}
+            {{ else }}
+            <div class="post-text">
+                <p>{{ .PostContent }}</p>
+            </div>
+            {{ end }}
+            {{ if not .Image }}
+            {{ else }}
+            <div class="post-img">
+                <img src="/templates/userImages/{{.Image}}" width="300" height="200" alt="">
+            </div>
+            {{ end }}
+
+            {{ end }}
+            <div class="post-likes-dislikes">
+                {{ if eq .UserType "mod" }}
+                {{if .Reported}}
+                <form id="postpagefilter" action="/report" method="POST">
+                    <label for="reportfilter">Report:</label>
+                    <select name="reportfilter" id="reportfilter">
+                        <option value="Irrelevant">Irrelevant</option>
+                        <option value="Obscene">Obscene</option>
+                        <option value="Illegal">Illegal</option>
+                        <option value="Insulting">Insulting</option>
+                    </select>
+                    <input type="submit" value="Submit">
+                    </form>
+                {{else}}
+                <form id="postpagefilter" action="/report" method="POST">
+                    <label for="reportfilter">Report:</label>
+                    <select name="reportfilter" id="reportfilter">
+                        <option value="Irrelevant">Irrelevant</option>
+                        <option value="Obscene">Obscene</option>
+                        <option value="Illegal">Illegal</option>
+                        <option value="Insulting">Insulting</option>
+                    </select>
+                    <input type="submit" value="Submit">
+                    </form>
+                {{end}}
+                {{end}}
+                <br>
+                <div class="post-like">
+                    <form action="/likes" method="POST">
+                        {{if and .Liked .LoggedIn}}
+                        <button class="like-dislike-btn" style="background-color:#89CFF0;" type="checkbox" name="like">
+                            <span class="glyphicon glyphicon-thumbs-up"></span> Liked
+                        </button>
+                        {{else}}
+                        <button class="like-dislike-btn" type="checkbox" name="like">
+                            <span class="glyphicon glyphicon-thumbs-up"></span> Like
+                        </button>
+                        {{end}}
+                    </form>
+                    {{ if eq .UserType "admin" "mod" }}
+                    <form action="/delete" method="POST">
+                        <button class="like-dislike-btn" type="submit" value="delete" name="delete">Delete</button>
+                    </form>
+                    {{ end }}
+                </div>
+                <form action="/dislikes" method="POST">
+                    {{if .Disliked}}
+                    <button class="like-dislike-btn" style="background-color:#CD5C5C;" type="checkbox" name="dislike">
+                        <span class="glyphicon glyphicon-thumbs-down"></span> Disliked
+                    </button>
+                    {{else}}
+                    <button class="like-dislike-btn" type="checkbox" name="dislike">
+                        <span class="glyphicon glyphicon-thumbs-down"></span> Dislike
+                    </button>
+                    {{end}}
+                </form>
+            </div>
+        </div>
+        <div>
+        </div>
+        <br>
+        {{ range .ReportType }}
+        {{ . }}
+        {{ end }}
+        {{ range .Comments}}
+        <div class="comment-row">
+            <div class="comment-body">
+                <div class="comment-body-top">
+                    <div class="comment-author">
+                        <p>{{ .CommentUserName }} </p>
+                    </div>
+                    <div class="comment-date">
+                        {{ .CreationDate }}
+                    </div>
+                </div>
+                <div class="comment-body-content">
+                    <p>{{ .CommentText }}</p>
+                </div>
+                <div class="comment-body-actions">
+                    <div class="like-button">
+                        <form action="/commentlikes" method="POST">
+                            <button class="like-dislike-btn" type="checkbox" name="commentlike"
+                                value="{{ .CommentID }}">
+                                <span class="glyphicon glyphicon-thumbs-up"></span> Like
+                            </button>
+                            {{ .Likes }}
+                        </form>
+                    </div>
+                    <form action="/commentdislikes" method="POST">
+                        <button class="like-dislike-btn" type="checkbox" name="commentdislike" value="{{ .CommentID }}">
+                            <span class="glyphicon glyphicon-thumbs-down"></span> Dislike
+                        </button>
+                        {{ .Dislikes }}
+                    </form>
+                    {{ if eq .UserType "admin" }}
+                    <form action="/deletecomment" method="POST">
+                        <button class="like-dislike-btn" type="submit" name="commentId" value="{{ .CommentID }}"
+                            name="deletecomment">Delete</button>
+                    </form>
+                    {{ end }}
+                </div>
+            </div>
+        </div>
+        {{ end }}
+
+        {{ if .LoggedIn }}
+        <div class="add-comment" style="margin:auto;">
+            <form action="/storecomment" method="POST">
+                <div class="comment-items">
+                    <textarea id="content" name="content" required></textarea>
+                    <button class="btn btn-primary" type="submit">Comment</button>
+                </div>
+            </form>
+        </div>
+        {{ else }}
+        {{ end }}
+</body>
+
+</html>
